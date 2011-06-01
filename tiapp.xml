@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ti:app xmlns:ti="http://ti.appcelerator.org">
+<id>com.horariocesumar.tiago</id>
+<name>HorarioCesumar</name>
+<version>1.0</version>
+<publisher>tiagoa</publisher>
+<url>http://tiagoa.com.br</url>
+<description>No description provided</description>
+<copyright>2011 by tiagoa</copyright>
+<icon>icone.png</icon>
+    <persistent-wifi>true</persistent-wifi>
+    <prerendered-icon>false</prerendered-icon>
+    <statusbar-style>default</statusbar-style>
+    <statusbar-hidden>false</statusbar-hidden>
+    <fullscreen>false</fullscreen>
+    <navbar-hidden>false</navbar-hidden>
+    <analytics>true</analytics>
+	<guid>38a729ff-d892-4de0-9909-eeaf7397ce1e</guid>
+</ti:app>

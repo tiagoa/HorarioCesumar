@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>Horario Cesumar</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link rel="stylesheet" href="jquery.mobile/jquery.mobile-1.0a4.1.min.css" />
+		<link rel="stylesheet" href="estilo.css" />
+		<script type="text/javascript" src="jquery.js"></script>
+		<script type="text/javascript" src="jquery.xdomainajax.js"></script>
+		<script type="text/javascript" src="funcoes.js"></script>
+		<script type="text/javascript" src="jquery.mobile/jquery.mobile-1.0a4.1.min.js"></script>
+		<script type="text/javascript">
+		$(document).ready(function(){
+			
+			d = new Date();
+			var dia = d.getDate(),
+				mes = d.getMonth(),
+				ano = d.getFullYear();
+			if(mes < 10){
+				mes = '0'+(mes+1);
+			} else {
+				mes = mes+1;	
+			}
+			var data = ano+'-'+mes+'-27';
+			hora = d.getHours();
+			var turno;
+			if(hora < 12) {
+				turno = "M";
+			}
+			else if(hora < 18){
+				turno = "T";
+			}
+			else{
+				turno = "N";
+			}
+			
+			$("#lnk-fechar").click(function(){
+				$("#alerta").dialog('close');
+			});
+			
+			$("#lnk-voltar").click(function(){
+				$.mobile.changePage($("#principal"));
+			});
+
+			$("#form").submit(function(){
+				var curso = $("#curso").val().toUpperCase();
+				var ano = $("#ano").val();
+				if(curso == "0"){
+					//alert("Digite o nome do seu curso");
+					$("#h-alerta").html("Escolha seu curso");
+					$.mobile.changePage($("#alerta"), "pop"); 
+				}
+				else if(ano == "0"){
+					$("#h-alerta").html("Escolha o ano que você está cursando");
+					$.mobile.changePage($("#alerta"), "pop"); 
+				} else {
+					var curso = ano+' '+curso;
+					var fonts = new Array();
+					$.ajax({
+						url: "http://www.cesumar.br/informatica/horario.php",
+						type: "GET",
+						data:{dados: data+'|N'},
+						success: function(res){
+							var html = url_decode(res.responseText);
+							var regexCurso = new RegExp(curso);
+							var temCurso = regexCurso.test(html);
+							if(temCurso){
+								$("#alvo").html("");
+								$('.texto', html).each(function(i, domEl){
+									var regexCelula = new RegExp(curso);
+									var htmlCelula = $(domEl).html();
+									if(regexCelula.test(htmlCelula)){
+										dadosHorario = htmlCelula.split("<br><br>");
+										//gambi mode on
+										var bloco = $(this).parentsUntil('.tabela').parent().parentsUntil('.tabela').parent().parent().find('font').html();
+										$('b', bloco).remove();
+										var laboratorio = $(this).parent().parent().find('td:first-child').children().children().html();
+										$("#alvo").prepend('<div class="horario ui-body-a"><div class="laboratorio">'+laboratorio+' - '+bloco+'</div><div class="professor>'+dadosHorario[0]+'</div><div class="turma">'+dadosHorario[1]+'('+dadosHorario[2]+')'+'</div></div>');
+									}
+								});
+								$.mobile.changePage($("#resultado"));
+							} else {
+								$.mobile.changePage($("#resultado"));
+								//$("#alvo").html('se fudel vai pra sala sem ar condicionadu <img src="trollface.png" alt="troll face" >');
+							}
+						},
+						error: function(event, request, settings){
+							alert('erro: '+settings.url);
+						}
+					});
+				}
+				return false;
+			});
+		});
+	;
+		</script>
+	</head>
+	<body>
+		<div data-role="page" data-theme="b" id="principal"> 
+			<div data-role="header">
+				<h1>Horário de laboratório</h1>
+			</div>
+			<div data-role="content">
+				<form action="#" method="post" id="form">
+					<div data-role="fieldcontain">
+						<label for="curso" class="select">Escolha seu curso:</label>
+						<select name="curso" id="curso" data-native-menu="false">
+							<option value="0">[Toca aqui]</option>
+							<option value="WEB">WEB</option>
+							<option value="RED">RED</option>
+							<option value="ADS">ADS</option>
+							<option value="SI">SI</option>
+						</select>
+					</div>
+					<div data-role="fieldcontain">
+						<label for="ano" class="select">Escolha o ano:</label>
+						<select name="ano" id="ano" data-native-menu="false">
+							<option value="0">[Toca aqui]</option>
+							<option value="1">1° Ano</option>
+							<option value="2">2° Ano</option>
+							<option value="3">3° Ano</option>
+							<option value="4">4° Ano</option>
+						</select>
+					</div>
+					<input type="submit" id="submit" value="Ver horário" />
+				</form>
+			</div>
+		</div>
+		
+		<div data-role="dialog" data-theme="a" id="alerta">
+			<div data-role="header">
+				<h1>Atenção!</h1>
+			</div>
+			<div data-role="content">
+				<h1 id="h-alerta"></h1>
+				<a href="#" data-role="button" id="lnk-fechar">Ok</a>
+			</div>
+		</div>
+		
+		<div data-role="page" data-theme="b" id="resultado">
+			<div data-role="header">
+				<a href="#" id="lnk-voltar" data-role="button" data-icon="arrow-l" data-iconpos="left">Voltar</a>
+				<h1>Horário de laboratório</h1>
+			</div>
+			<div data-role="content">
+				<div class="ui-grid-a" id="alvo"></div>
+			</div>
+		</div>
+		
+	</body>
+</html>

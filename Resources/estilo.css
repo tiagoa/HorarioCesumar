@@ -1,0 +1,11 @@
+.horario{
+	padding: 10px 0px 0px 10px;
+	float: left;
+	width: 99%;
+}
+.horario div{
+	margin-bottom: 10px;
+}
+.laboratorio{}
+.professor{}
+.turma{}
