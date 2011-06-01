@@ -21,7 +21,7 @@
 			} else {
 				mes = mes+1;	
 			}
-			var data = ano+'-'+mes+'-27';
+			var data = ano+'-'+mes+'-'+dia;
 			hora = d.getHours();
 			var turno;
 			if(hora < 12) {
@@ -59,7 +59,7 @@
 					$.ajax({
 						url: "http://www.cesumar.br/informatica/horario.php",
 						type: "GET",
-						data:{dados: data+'|N'},
+						data:{dados: data+'|'+turno},
 						success: function(res){
 							var html = url_decode(res.responseText);
 							var regexCurso = new RegExp(curso);
@@ -80,12 +80,15 @@
 								});
 								$.mobile.changePage($("#resultado"));
 							} else {
-								$.mobile.changePage($("#resultado"));
-								//$("#alvo").html('se fudel vai pra sala sem ar condicionadu <img src="trollface.png" alt="troll face" >');
+								$("#h-alerta").html('Vai ficar sem ar-condicionado hoje <img src="trollface.png" alt="troll" />');
+								$("#lnk-fechar").html('<img src="okayface.png" alt="Ok" />');
+								$.mobile.changePage($("#alerta"), "pop");
 							}
 						},
 						error: function(event, request, settings){
-							alert('erro: '+settings.url);
+							$("#h-alerta").html('Ocorreu um erro na tentativa de pegar o horário.');
+							$("#lnk-fechar").html('<img src="okayface.png" alt="Ok" />');
+							$.mobile.changePage($("#alerta"), "pop");
 						}
 					});
 				}
@@ -98,7 +101,7 @@
 	<body>
 		<div data-role="page" data-theme="b" id="principal"> 
 			<div data-role="header">
-				<h1>Horário de laboratório</h1>
+				<h1 id="h-titulo">Horário de laboratório</h1>
 			</div>
 			<div data-role="content">
 				<form action="#" method="post" id="form">

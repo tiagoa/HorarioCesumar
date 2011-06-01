@@ -9,3 +9,6 @@
 .laboratorio{}
 .professor{}
 .turma{}
+#h-titulo{
+	margin: 0.6em 0px 0.8em 0px !important;
+}
