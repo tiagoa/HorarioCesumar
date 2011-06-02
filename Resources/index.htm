@@ -23,15 +23,18 @@
 			}
 			var data = ano+'-'+mes+'-'+dia;
 			hora = d.getHours();
-			var turno;
+			var turno = $("#npt-turno");
 			if(hora < 12) {
-				turno = "M";
+				turno.val("M");
+				$("#manha").addClass('ui-btn-active');
 			}
 			else if(hora < 18){
-				turno = "T";
+				turno.val("T");
+				$("#tarde").addClass('ui-btn-active');
 			}
 			else{
-				turno = "N";
+				turno.val("N");
+				$("#noite").addClass('ui-btn-active');
 			}
 			
 			$("#lnk-fechar").click(function(){
@@ -41,12 +44,18 @@
 			$("#lnk-voltar").click(function(){
 				$.mobile.changePage($("#principal"));
 			});
-
+			
+			$(".lnk-tab").click(function(){
+				$(".lnk-tab").removeClass("ui-btn-active");
+				$(this).addClass("ui-btn-active");
+				turno.val($(this).attr("href"));
+				return false;
+			});
+			
 			$("#form").submit(function(){
 				var curso = $("#curso").val().toUpperCase();
 				var ano = $("#ano").val();
 				if(curso == "0"){
-					//alert("Digite o nome do seu curso");
 					$("#h-alerta").html("Escolha seu curso");
 					$.mobile.changePage($("#alerta"), "pop"); 
 				}
@@ -59,7 +68,10 @@
 					$.ajax({
 						url: "http://www.cesumar.br/informatica/horario.php",
 						type: "GET",
-						data:{dados: data+'|'+turno},
+						data:{dados: data+'|'+turno.val()},
+						beforeSend: function(){
+							$.mobile.pageLoading();
+						},
 						success: function(res){
 							var html = url_decode(res.responseText);
 							var regexCurso = new RegExp(curso);
@@ -75,7 +87,7 @@
 										var bloco = $(this).parentsUntil('.tabela').parent().parentsUntil('.tabela').parent().parent().find('font').html();
 										$('b', bloco).remove();
 										var laboratorio = $(this).parent().parent().find('td:first-child').children().children().html();
-										$("#alvo").prepend('<div class="horario ui-body-a"><div class="laboratorio">'+laboratorio+' - '+bloco+'</div><div class="professor>'+dadosHorario[0]+'</div><div class="turma">'+dadosHorario[1]+'('+dadosHorario[2]+')'+'</div></div>');
+										$("#alvo").append('<div class="horario ui-body-a"><div class="laboratorio">'+laboratorio+' - '+bloco+'</div><div class="professor>'+dadosHorario[0]+'</div><div class="turma">'+dadosHorario[1]+'('+dadosHorario[2]+')'+'</div></div>');
 									}
 								});
 								$.mobile.changePage($("#resultado"));
@@ -89,6 +101,9 @@
 							$("#h-alerta").html('Ocorreu um erro na tentativa de pegar o horário.');
 							$("#lnk-fechar").html('<img src="okayface.png" alt="Ok" />');
 							$.mobile.changePage($("#alerta"), "pop");
+						},
+						complete: function(){
+							$.mobile.pageLoading(true);
 						}
 					});
 				}
@@ -101,26 +116,37 @@
 	<body>
 		<div data-role="page" data-theme="b" id="principal"> 
 			<div data-role="header">
-				<h1 id="h-titulo">Horário de laboratório</h1>
+				<h1 class="h-titulo">Horário de laboratório</h1>
+				<div data-role="navbar">
+					<ul>
+						<li><a href="M"  id="manha" class="lnk-tab">Manhã</a></li>
+						<li><a href="T" id="tarde" class="lnk-tab">Tarde</a></li>
+						<li><a href="N" id="noite" class="lnk-tab">Noite</a></li>
+					</ul>
+				</div>
 			</div>
 			<div data-role="content">
 				<form action="#" method="post" id="form">
+					<input type="hidden" name="turno" id="npt-turno" />
 					<div data-role="fieldcontain">
 						<label for="curso" class="select">Escolha seu curso:</label>
 						<select name="curso" id="curso" data-native-menu="false">
-							<option value="0">[Toca aqui]</option>
 							<option value="WEB">WEB</option>
-							<option value="RED">RED</option>
 							<option value="ADS">ADS</option>
+							<option value="ART">ART</option>
+							<option value="AUT">AUT</option>
+							<option value="DESIGN">DESIGN</option>
+							<option value="JOR">JOR</option>
+							<option value="MODA">MODA</option>
+							<option value="RED">RED</option>
 							<option value="SI">SI</option>
 						</select>
 					</div>
 					<div data-role="fieldcontain">
 						<label for="ano" class="select">Escolha o ano:</label>
 						<select name="ano" id="ano" data-native-menu="false">
-							<option value="0">[Toca aqui]</option>
-							<option value="1">1° Ano</option>
 							<option value="2">2° Ano</option>
+							<option value="1">1° Ano</option>
 							<option value="3">3° Ano</option>
 							<option value="4">4° Ano</option>
 						</select>
@@ -141,14 +167,15 @@
 		</div>
 		
 		<div data-role="page" data-theme="b" id="resultado">
-			<div data-role="header">
-				<a href="#" id="lnk-voltar" data-role="button" data-icon="arrow-l" data-iconpos="left">Voltar</a>
-				<h1>Horário de laboratório</h1>
+			<div data-role="header" data-backbtn="false">
+				<h1 class="h-titulo">Horário de laboratório</h1>
 			</div>
 			<div data-role="content">
 				<div class="ui-grid-a" id="alvo"></div>
 			</div>
+			<div data-role="footer" class="ui-bar">
+				<a href="#" id="lnk-voltar" data-role="button" data-icon="arrow-l" data-iconpos="left">Voltar</a>
+			</div> 
 		</div>
-		
 	</body>
 </html>

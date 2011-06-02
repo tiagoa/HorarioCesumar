@@ -1,7 +1,7 @@
-Welcome to your Appcelerator Titanium Mobile Project
+Horário dos laboratórios de informática do Cesumar
 
-This is a blank project.  Start by editing your application's app.js to 
-make your first mobile project using Titanium.
+É um aplicativo desenvolvido em HTML jQueryMobile e CSS e compilado com Titanium.
+A única funcionalidade é verificar se a turma de um certo ano tem aula marcada em um dos laboratórios.
 
 
 

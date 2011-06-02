@@ -1,14 +1,10 @@
 .horario{
 	padding: 10px 0px 0px 10px;
-	float: left;
 	width: 99%;
 }
 .horario div{
 	margin-bottom: 10px;
 }
-.laboratorio{}
-.professor{}
-.turma{}
-#h-titulo{
+.h-titulo{
 	margin: 0.6em 0px 0.8em 0px !important;
 }
