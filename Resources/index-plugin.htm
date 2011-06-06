@@ -24,26 +24,18 @@
 			}
 			var data = ano+'-'+mes+'-'+dia;
 			hora = d.getHours();
-			
 			var turno = $("#npt-turno");
-			
-			if($.cookie('turno')){
-				var valorTurno = $.cookie('turno');
-				turno.val(valorTurno);
-				$('.lnk-tab[href="'+valorTurno+'"]').addClass('ui-btn-active');
-			} else {
-				if(hora < 12) {
-					turno.val("M");
-					$("#manha").addClass('ui-btn-active');
-				}
-				else if(hora < 18){
-					turno.val("T");
-					$("#tarde").addClass('ui-btn-active');
-				}
-				else{
-					turno.val("N");
-					$("#noite").addClass('ui-btn-active');
-				}
+			if(hora < 12) {
+				turno.val("M");
+				$("#manha").addClass('ui-btn-active');
+			}
+			else if(hora < 18){
+				turno.val("T");
+				$("#tarde").addClass('ui-btn-active');
+			}
+			else{
+				turno.val("N");
+				$("#noite").addClass('ui-btn-active');
 			}
 			
 			$("#lnk-fechar").click(function(){
@@ -64,10 +56,12 @@
 			var configuracaoCookie = {expires: 12, path: '/'};
 			
 			$("#lnk-limpar").click(function(){
-				$.cookie('curso', null, {expires: -1, path: '/'});
-				$.cookie('ano', null, {expires: -1, path: '/'});
-				$.cookie('turno', null, {expires: -1, path: '/'});
-				alert(document.cookie);
+				$.cookie('curso', null, {path: '/', expires: -10});
+				$.cookie('ano', null, {path: '/', expires: -10});
+				$.cookie('foo', null, {path: '/', expires: -10});
+				$.cookie('fuck', null, {path: '/', expires: -10});
+				$.cookie('teste', null, {path: '/', expires: -10});
+				alert('limpay os cuquies');
 				return false;
 			});
 			
@@ -90,15 +84,11 @@
 					$.mobile.changePage($("#alerta"), "pop"); 
 				} else {
 					var cursoAno = ano+' '+curso;
-					var letraTurno = turno.val();
 					var fonts = new Array();
-					$.cookie('curso', curso, configuracaoCookie);
-					$.cookie('ano', ano, configuracaoCookie);
-					$.cookie('turno', letraTurno, configuracaoCookie);
 					$.ajax({
 						url: "http://www.cesumar.br/informatica/horario.php",
 						type: "GET",
-						data:{dados: data+'|'+letraTurno},
+						data:{dados: data+'|'+turno.val()},
 						beforeSend: function(){
 							$.mobile.pageLoading();
 						},
@@ -137,8 +127,12 @@
 						}
 					});
 				}
+				
 				return false;
 			});
+			$.cookie('curso', 'WEB', configuracaoCookie);
+			$.cookie('ano', '2', configuracaoCookie);
+			alert('curso: '+$.cookie('curso')+' ano: '+$.cookie('ano'));
 		});
 		</script>
 	</head>
@@ -183,7 +177,7 @@
 						</select>
 					</div>
 					<input type="submit" id="submit" value="Ver horário" />
-					<!--<a href="#" data-role="button" id="lnk-limpar">Limpar dados</a>-->
+					<a href="#" data-role="button" id="lnk-limpar">Limpar dados</a>
 				</form>
 			</div>
 		</div>
